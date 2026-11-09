@@ -1,4 +1,4 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -9,17 +9,18 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Allow access to remote image placeholder.
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
-      },
+      { protocol: 'https', hostname: 'picsum.photos', port: '', pathname: '/**' },
       { protocol: 'https', hostname: 'images.unsplash.com', port: '', pathname: '/**' },
+      // ✅ TMDB (بوسترات وخلفيات الأفلام)
+      { protocol: 'https', hostname: 'image.tmdb.org', port: '', pathname: '/t/p/**' },
+      // ✅ Akwam CDN (احتياطي إن استخدمنا next/image لاحقاً هناك)
+      { protocol: 'https', hostname: 'img.downet.net', port: '', pathname: '/**' },
     ],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 342, 384, 512],
   },
   output: 'standalone',
   transpilePackages: ['motion'],
@@ -28,34 +29,19 @@ const nextConfig: NextConfig = {
       {
         source: '/sw.js',
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate',
-          },
-          {
-            key: 'Service-Worker-Allowed',
-            value: '/',
-          },
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+          { key: 'Service-Worker-Allowed', value: '/' },
         ],
       },
       {
         source: '/manifest.json',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'application/manifest+json',
-          },
-        ],
+        headers: [{ key: 'Content-Type', value: 'application/manifest+json' }],
       },
     ];
   },
-  webpack: (config, {dev}) => {
-    // HMR is disabled in AI Studio via DISABLE_HMR env var.
-    // Do not modifyâ€”file watching is disabled to prevent flickering during agent edits.
+  webpack: (config, { dev }) => {
     if (dev && process.env.DISABLE_HMR === 'true') {
-      config.watchOptions = {
-        ignored: /.*/,
-      };
+      config.watchOptions = { ignored: /.*/ };
     }
     return config;
   },

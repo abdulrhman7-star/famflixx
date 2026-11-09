@@ -22,7 +22,7 @@ import {
   Star,
   Check
 } from 'lucide-react';
-import EmbedModal from './EmbedModal';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   HistoryItem, 
@@ -32,6 +32,12 @@ import {
   removeFromWatchHistory 
 } from '@/lib/history';
 import { useLanguage } from '@/lib/LanguageContext';
+
+// ✅ EmbedModal يُحمَّل فقط عند فتحه
+const EmbedModal = dynamic(() => import('./EmbedModal'), {
+  ssr: false,
+  loading: () => null,
+});
 
 interface MediaItem {
   title: string;
@@ -728,7 +734,7 @@ export default function AkwamApp() {
                           <Play className="w-3 h-3 fill-current" />
                           <span>{t('history_continue', 'Continue')}</span>
                         </span>
-                        <span className="text-[10px] text-slate-500 font-mono">
+                        <span className="text-[10px] text-slate-500 font-mono" suppressHydrationWarning>
                           {formatRelativeTime(item.watchedAt, lang)}
                         </span>
                       </div>

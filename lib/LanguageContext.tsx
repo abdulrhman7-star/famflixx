@@ -28,9 +28,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       const saved = (localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY)) as LangCode | null;
       if (saved && (saved === 'ar' || saved === 'en' || saved === 'fr' || saved === 'es' || saved === 'tr')) {
         if (saved !== 'ar') {
-          queueMicrotask(() => {
+          setTimeout(() => {
             setLangState(saved);
-          });
+          }, 0);
         }
         const info = LANGUAGES.find((l) => l.code === saved);
         const dir = info?.dir || (saved === 'ar' ? 'rtl' : 'ltr');

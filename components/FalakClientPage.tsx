@@ -6,11 +6,23 @@ import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
 import GenreChips from '@/components/GenreChips';
 import DetailPanel from '@/components/DetailPanel';
-import Player from '@/components/Player';
 import MediaCard from '@/components/MediaCard';
 import UnauthorizedDomainModal from '@/components/UnauthorizedDomainModal';
 import Hero from '@/components/Hero';
-import FalakHeroSearch from '@/components/FalakHeroSearch';   // ← جديد
+import FalakHeroSearch from '@/components/FalakHeroSearch';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+
+// ✅ Player يُحمَّل فقط عند فتحه — يوفّر ~110 KB من الحزمة الأولية
+const Player = dynamic(() => import('@/components/Player'), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center text-white">
+      <div className="animate-spin w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full" />
+    </div>
+  ),
+});
+
 import { fetchTMDB } from '@/lib/tmdb';
 import { auth, googleProvider, db } from '@/lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
@@ -660,7 +672,7 @@ export default function FalakClientPage({ initialSearchParams }: FalakClientPage
     [saveToRecentSearch, handleOpenDetail]
   );
 
-  // ===== البحث من Hero (نفس السلوك لكن يبدأ من صفر) =====
+  // ===== البحث من Hero =====
   const handleSelectHeroResult = useCallback(
     (item: MediaItem) => {
       const type = (item as any).media_type || item.mediaType || 'movie';
@@ -802,7 +814,6 @@ export default function FalakClientPage({ initialSearchParams }: FalakClientPage
           <div>
             <Hero />
 
-            {/* ✅ البحث البارز أسفل الـ Hero مباشرة — مستقل تماماً عن AkwamApp */}
             <FalakHeroSearch
               lang={lang}
               onSelectMedia={handleSelectHeroResult}
@@ -854,11 +865,14 @@ export default function FalakClientPage({ initialSearchParams }: FalakClientPage
                       >
                         <div className="relative aspect-[2/3] w-full bg-black/40 overflow-hidden">
                           {item.poster_path ? (
-                            <img
+                            <Image
                               src={`https://image.tmdb.org/t/p/w342${item.poster_path}`}
                               alt={item.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              fill
+                              sizes="(max-width: 640px) 144px, 176px"
+                              className="object-cover group-hover:scale-105 transition-transform duration-300"
                               loading="lazy"
+                              referrerPolicy="no-referrer"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gray-900 text-gray-600">

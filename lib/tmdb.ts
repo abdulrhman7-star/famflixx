@@ -1,6 +1,6 @@
 // lib/tmdb.ts — add above fetchTMDB
 const cache = new Map<string, { ts: number; data: any }>();
-const CACHE_MS = 60_000;
+const CACHE_MS = 15 * 60_000;   // 15 دقيقة
 
 interface FetchTMDBOptions {
   lang?: string;

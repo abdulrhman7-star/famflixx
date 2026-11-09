@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useState, useEffect } from 'react';
 
 export interface HistoryItem {
   title: string;
@@ -34,25 +34,33 @@ export function getWatchHistory(): HistoryItem[] {
   }
 }
 
-function subscribeToHistory(callback: () => void) {
-  if (typeof window === 'undefined') return () => {};
-  window.addEventListener('watch-history-updated', callback);
-  window.addEventListener('storage', callback);
-  return () => {
-    window.removeEventListener('watch-history-updated', callback);
-    window.removeEventListener('storage', callback);
-  };
-}
-
-function getServerSnapshot(): HistoryItem[] {
-  return EMPTY_HISTORY;
-}
-
 /**
- * Hydration-safe React hook for watch history using useSyncExternalStore
+ * Hydration-safe React hook for watch history
  */
 export function useWatchHistory(): HistoryItem[] {
-  return useSyncExternalStore(subscribeToHistory, getWatchHistory, getServerSnapshot);
+  const [history, setHistory] = useState<HistoryItem[]>(EMPTY_HISTORY);
+
+  useEffect(() => {
+    // Read from localStorage asynchronously after client hydration completes
+    const timer = setTimeout(() => {
+      setHistory(getWatchHistory());
+    }, 0);
+
+    const handleUpdate = () => {
+      setHistory(getWatchHistory());
+    };
+
+    window.addEventListener('watch-history-updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('watch-history-updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  return history;
 }
 
 export function addToWatchHistory(item: { title: string; url: string; image?: string }) {
