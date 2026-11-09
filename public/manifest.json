@@ -1,0 +1,26 @@
+{
+  "name": "FamFlix — مشاهدة الأفلام والمسلسلات",
+  "short_name": "FamFlix",
+  "description": "منصة بث أفلام ومسلسلات بترجمة عربية",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/falak",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#07080b",
+  "theme_color": "#07080b",
+  "categories": ["entertainment", "video", "movies"],
+  "icons": [
+    { "src": "/pwa-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/pwa-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/pwa-maskable-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "الرئيسية", "url": "/falak", "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }] },
+    { "name": "البحث", "url": "/falak?tab=search", "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }] },
+    { "name": "المفضلة", "url": "/falak?tab=favorites", "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }] }
+  ]
+}
